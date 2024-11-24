@@ -9,14 +9,14 @@ type Room = ReturnType<NodeHaxball["Room"]["join"]>["room"];
 Utils.generateAuth().then(([authKey, authObj]) => {
   Room.join(
     {
-      id: "CkFviTC4f6c",
+      id: process.argv[2],
       authObj,
     },
     {
       // @ts-expect-error
       storage: {
         player_name: "AI Player",
-        avatar: "👽",
+        avatar: "🤖",
         player_auth_key: authKey,
       },
       plugins: [],
