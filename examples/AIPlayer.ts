@@ -53,19 +53,23 @@ export class AIPlayer {
         ball.velocity.x,
         ball.position.y,
         ball.velocity.y,
-        currentPlayer.position.x,
-        currentPlayer.velocity.x,
-        currentPlayer.position.y,
-        currentPlayer.velocity.y,
         ...zip(
-          otherPlayers.flatMap((player) => [
-            player.position.x,
-            player.position.y,
-          ]),
-          otherPlayers.flatMap((player) => [
-            player.velocity.x,
-            player.velocity.y,
-          ])
+          [
+            currentPlayer.position.x,
+            currentPlayer.position.y,
+            ...otherPlayers.flatMap((player) => [
+              player.position.x,
+              player.position.y,
+            ]),
+          ],
+          [
+            currentPlayer.velocity.x,
+            currentPlayer.velocity.y,
+            ...otherPlayers.flatMap((player) => [
+              player.velocity.x,
+              player.velocity.y,
+            ]),
+          ]
         ).flat(),
       ],
       teams
