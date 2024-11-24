@@ -4,7 +4,7 @@ const { Replay } = NodeHaxball();
 
 import fs from "fs";
 import { z } from "zod";
-import trainingDataSchema from "./trainingDataSchema";
+import { trainingDataSchema } from "./schemas";
 
 const fileNames = fs.readdirSync("./data/recs");
 const files = fileNames.map((fileName) =>

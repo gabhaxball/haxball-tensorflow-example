@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export default z
+export const trainingDataSchema = z
   .object({
     tick: z.number(),
     players: z.array(
@@ -31,3 +31,7 @@ export default z
   })
   .array()
   .array();
+
+export const configSchema = z.object({
+  playerLength: z.number(),
+});

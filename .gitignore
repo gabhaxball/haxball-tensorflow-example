@@ -2,3 +2,4 @@ data/output
 data/recs
 data/trainingData.json
 node_modules
+configs.json

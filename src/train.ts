@@ -1,11 +1,13 @@
 import * as tf from "@tensorflow/tfjs";
 import fs from "fs";
 import "@tensorflow/tfjs-node";
-import trainingDataSchema from "./trainingDataSchema";
-import configs from "../configs.json";
+import { trainingDataSchema, configSchema } from "./schemas";
 
 const rawData = fs.readFileSync("./data/trainingData.json", "utf-8");
+const rawConfigs = fs.readFileSync("./configs.json", "utf-8");
+
 const matchesData = trainingDataSchema.parse(JSON.parse(rawData));
+const configs = configSchema.parse(JSON.parse(rawConfigs));
 
 // Flatten all matches into a single array of game states
 const trainingDataRaw = matchesData.flat();
