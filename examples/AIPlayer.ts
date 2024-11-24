@@ -1,5 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 import "@tensorflow/tfjs-node";
+import { addTeams, zip } from "../src/utils";
 
 export class AIPlayer {
   private model: tf.LayersModel | null = null;
@@ -25,28 +26,50 @@ export class AIPlayer {
       position: { x: number; y: number };
       velocity: { x: number; y: number };
     },
+    currentPlayer: {
+      position: { x: number; y: number };
+      velocity: { x: number; y: number };
+      team: number;
+    },
     otherPlayers: Array<{
       position: { x: number; y: number };
       velocity: { x: number; y: number };
+      team: number;
     }>
   ) {
     if (!this.model) {
       throw new Error("Model not loaded. Call loadModel() first.");
     }
 
-    // Format input in the same way as training data
-    const input = [
-      ball.position.x,
-      ball.position.y,
-      ball.velocity.x,
-      ball.velocity.y,
-      ...otherPlayers.flatMap((player) => [
-        player.position.x,
-        player.position.y,
-        player.velocity.x,
-        player.velocity.y,
-      ]),
+    const teams = [
+      currentPlayer.team,
+      ...otherPlayers.map((player) => player.team),
     ];
+
+    // Format input in the same way as training data
+    const input = addTeams(
+      [
+        ball.position.x,
+        ball.velocity.x,
+        ball.position.y,
+        ball.velocity.y,
+        currentPlayer.position.x,
+        currentPlayer.velocity.x,
+        currentPlayer.position.y,
+        currentPlayer.velocity.y,
+        ...zip(
+          otherPlayers.flatMap((player) => [
+            player.position.x,
+            player.position.y,
+          ]),
+          otherPlayers.flatMap((player) => [
+            player.velocity.x,
+            player.velocity.y,
+          ])
+        ).flat(),
+      ],
+      teams
+    );
 
     // Normalize input
     const normalizedInput = this.normalize(input);
@@ -60,6 +83,8 @@ export class AIPlayer {
     inputTensor.dispose();
     prediction.dispose();
 
-    return result;
+    const normalizedResult = Math.min(Math.max(0, Math.round(result)), 31);
+
+    return normalizedResult;
   }
 }

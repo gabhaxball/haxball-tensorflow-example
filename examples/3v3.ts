@@ -4,7 +4,7 @@ async function example() {
   const ai = new AIPlayer();
   await ai.loadModel();
 
-  const rawInput = ai.predict(
+  const input = ai.predict(
     {
       position: {
         x: -431.33419636303904,
@@ -14,6 +14,17 @@ async function example() {
         x: 0.7370421721824291,
         y: 0.26680657048122086,
       },
+    },
+    {
+      position: {
+        x: -203.1239491343193194,
+        y: 50.10340131014034056,
+      },
+      velocity: {
+        x: -1.7996982951295888,
+        y: -0.12987473732603494,
+      },
+      team: 1,
     },
     [
       {
@@ -25,6 +36,7 @@ async function example() {
           x: -1.7996982951295888,
           y: -0.12987473732603494,
         },
+        team: 1,
       },
       {
         position: {
@@ -35,6 +47,7 @@ async function example() {
           x: 0.8917849352646419,
           y: -0.2881502710165808,
         },
+        team: 2,
       },
       {
         position: {
@@ -45,6 +58,7 @@ async function example() {
           x: -0.47608700164142276,
           y: -0.034892275611693224,
         },
+        team: 2,
       },
       {
         position: {
@@ -55,6 +69,7 @@ async function example() {
           x: -0.24037156788622713,
           y: 0.6971307994385778,
         },
+        team: 2,
       },
       {
         position: {
@@ -65,11 +80,10 @@ async function example() {
           x: -2.557015738025173,
           y: -3.9486622011873638,
         },
+        team: 1,
       },
     ]
   );
-
-  const input = Math.min(Math.max(0, Math.round(rawInput)), 31);
 
   console.log("Predicted input:", input);
 }

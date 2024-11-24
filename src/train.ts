@@ -1,7 +1,7 @@
 import * as tf from "@tensorflow/tfjs";
 import fs from "fs";
 import "@tensorflow/tfjs-node";
-import { trainingDataSchema, configSchema } from "./schemas";
+import { trainingDataSchema, configSchema, zip, addTeams } from "./utils";
 
 const rawData = fs.readFileSync("./data/trainingData.json", "utf-8");
 const rawConfigs = fs.readFileSync("./configs.json", "utf-8");
@@ -9,50 +9,69 @@ const rawConfigs = fs.readFileSync("./configs.json", "utf-8");
 const matchesData = trainingDataSchema.parse(JSON.parse(rawData));
 const configs = configSchema.parse(JSON.parse(rawConfigs));
 
-// Flatten all matches into a single array of game states
 const trainingDataRaw = matchesData.flat();
 
-// Filter to ensure consistent number of players across all game states
 const trainingData = trainingDataRaw.filter(
   (data) => data.players.length === configs.playerLength
 );
 
-const normalize = (data: number[]) => {
-  const max = Math.max(...data);
+function normalize(data: number[]) {
+  if (!Array.isArray(data) || data.some(isNaN)) {
+    throw new Error("Input must be an array of numbers");
+  }
+
   const min = Math.min(...data);
-  return data.map((value) => (max === min ? 0 : (value - min) / (max - min)));
-};
+  const max = Math.max(...data);
+
+  if (min === max) {
+    return data.map(() => 0.5);
+  }
+
+  return data.map((value) => (value - min) / (max - min));
+}
 
 const data = trainingData.flatMap((data) => {
   return data.players.map((currentPlayer, playerIndex) => {
-    // Get all players except the current one
     const otherPlayers = [
       ...data.players.slice(0, playerIndex),
       ...data.players.slice(playerIndex + 1),
     ];
 
-    // Create input features
-    const input = [
+    const positions = normalize([
       data.ball.position.x,
       data.ball.position.y,
-      data.ball.velocity.x,
-      data.ball.velocity.y,
+      currentPlayer.position.x,
+      currentPlayer.position.y,
       ...otherPlayers.flatMap((player) => [
         player.position.x,
         player.position.y,
+      ]),
+    ]);
+
+    const velocities = normalize([
+      data.ball.velocity.x,
+      data.ball.velocity.y,
+      currentPlayer.velocity.x,
+      currentPlayer.velocity.y,
+      ...otherPlayers.flatMap((player) => [
         player.velocity.x,
         player.velocity.y,
       ]),
+    ]);
+
+    const teams = [
+      currentPlayer.team,
+      ...otherPlayers.map((player) => player.team),
     ];
 
-    // Create output (the current player's input)
+    const input = addTeams(zip(positions, velocities).flat(), teams);
     const output = [currentPlayer.input];
 
     return { input, output };
   });
 });
 
-const inputs = data.map((d) => d.input).map(normalize);
+const inputs = data.map((d) => d.input);
 const outputs = data.map((d) => d.output);
 
 // Create and configure the model
