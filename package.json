@@ -1,0 +1,26 @@
+{
+  "name": "hax-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "train": "tsx src/train.ts",
+    "prepare": "tsx src/prepare.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "node-haxball": "^1.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
