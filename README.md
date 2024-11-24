@@ -14,5 +14,5 @@ This project is a proof of concept and has not been tested.
 
 ## Running examples
 
-1. Train a model in one of the available team sizes in the `examples` folder, or create your own.
-2. Run `npm run examples:GAME_SIZE` where `GAME_SIZE` is the team size. For example, `npm run examples:3v3`.
+1. Train a model in one of the available team sizes in the `examples` folder, or create your own
+2. Run the example
