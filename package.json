@@ -7,7 +7,8 @@
   "scripts": {
     "train": "tsx src/train.ts",
     "prepare": "tsx src/prepare.ts",
-    "examples:3v3": "tsx examples/3v3.ts"
+    "examples:3v3": "tsx examples/3v3.ts",
+    "examples:1v1": "tsx examples/1v1.ts"
   },
   "keywords": [],
   "author": "",

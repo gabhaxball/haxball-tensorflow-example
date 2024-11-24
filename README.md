@@ -11,3 +11,8 @@ This project is a proof of concept and has not been tested.
 3. Copy `configs.example.json` into `configs.json` and adjust according to your needs
 4. Prepare data with `npm run prepare`
 5. Train model with `npm run train`
+
+## Running examples
+
+1. Train a model in one of the available team sizes in the `examples` folder, or create your own.
+2. Run `npm run examples:GAME_SIZE` where `GAME_SIZE` is the team size. For example, `npm run examples:3v3`.
