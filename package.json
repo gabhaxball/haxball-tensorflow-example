@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "train": "tsx src/train.ts",
-    "prepare": "tsx src/prepare.ts"
+    "prepare": "tsx src/prepare.ts",
+    "examples:3v3": "tsx examples/3v3.ts"
   },
   "keywords": [],
   "author": "",
