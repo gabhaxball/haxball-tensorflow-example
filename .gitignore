@@ -1,5 +1,5 @@
 data/output
 data/recs
-data/trainingData.json
+data/trainingData.bin
 node_modules
 configs.json

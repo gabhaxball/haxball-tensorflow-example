@@ -4,16 +4,17 @@ const { Replay } = NodeHaxball();
 
 import fs from "fs";
 import { z } from "zod";
-import { trainingDataSchema } from "./utils";
+import { configSchema, toBinary, trainingDataSchema } from "./utils";
 
+const rawConfigs = fs.readFileSync("./configs.json", "utf-8");
+const configs = configSchema.parse(JSON.parse(rawConfigs));
 const fileNames = fs.readdirSync("./data/recs");
-const files = fileNames.map((fileName) =>
-  fs.readFileSync("./data/recs/" + fileName)
-);
+const outputFilePath = "./data/trainingData.bin";
 
-const data = files.map((file) => {
-  return new Promise((resolve) => {
-    const data: z.infer<typeof trainingDataSchema>[number] = [];
+const data = fileNames.map((fileName) => {
+  return new Promise<z.infer<typeof trainingDataSchema>>((resolve) => {
+    const data: z.infer<typeof trainingDataSchema> = [];
+    const file = fs.readFileSync("./data/recs/" + fileName);
 
     const replayReader = Replay.read(
       file,
@@ -67,9 +68,53 @@ const data = files.map((file) => {
   });
 });
 
-Promise.all(data)
-  .then((data) => {
-    fs.writeFileSync("./data/trainingData.json", JSON.stringify(data, null, 2));
-    process.exit(0);
-  })
-  .catch((err) => console.error(err));
+if (fs.existsSync(outputFilePath)) {
+  fs.unlinkSync(outputFilePath);
+}
+
+const outputStream = fs.createWriteStream(outputFilePath, { flags: "w" });
+let i = 0;
+
+for (const d of data) {
+  try {
+    i++;
+
+    const inputData = (await d).filter(
+      (data) => data.players.length === configs.playerLength
+    );
+
+    if (inputData.length === 0) {
+      console.log("Empty, skipping");
+      continue;
+    }
+
+    if (
+      inputData.sort((a, b) => b.tick - a.tick)[0].tick <
+      configs.minTicksToPrepare
+    ) {
+      console.log("Not enough ticks, skipping");
+      continue;
+    }
+
+    const buffer = toBinary(inputData);
+
+    if (buffer.length === 0) {
+      console.log("Empty buffer, skipping");
+      continue;
+    }
+
+    const size = Buffer.alloc(4);
+    size.writeUint32LE(buffer.length);
+
+    outputStream.write(size);
+    outputStream.write(buffer);
+
+    console.log(
+      `Wrote ${i} of ${data.length} (${((i / data.length) * 100).toFixed(2)}%)`
+    );
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+outputStream.end();

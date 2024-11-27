@@ -1,3 +1,4 @@
 {
-  "playerLength": 6
+  "playerLength": 6,
+  "minTicksToPrepare": 3600
 }

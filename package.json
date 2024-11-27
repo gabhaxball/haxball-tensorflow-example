@@ -9,7 +9,7 @@
     "prepare": "tsx src/prepare.ts",
     "examples:3v3": "tsx examples/3v3.ts",
     "examples:1v1": "tsx examples/1v1.ts",
-    "examples:room-1v1": "tsx examples/room-1v1.ts"
+    "examples:room": "tsx examples/room.ts"
   },
   "keywords": [],
   "author": "",
